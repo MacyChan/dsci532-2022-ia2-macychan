@@ -6,7 +6,7 @@ library(tidyverse)
 
 app <- Dash$new(external_stylesheets = dbcThemes$BOOTSTRAP)
 
-df <- read.csv("data/Primary-energy-consumption-from-fossilfuels-nuclear-renewables.csv") |>
+df <- read.csv("data/Primary-energy-consumption-from-fossilfuels-nuclear-renewables.csv") %>%
     drop_na()
 
 year_range <- seq(min(df$Year), max(df$Year),5)
@@ -33,9 +33,9 @@ app$layout(
                 htmlP("Engery type"),
                 dccDropdown(
                     id='col-select',
-                    options = df |>
-                        select(Fossil, Nuclear, Renewables) |>
-                        colnames() |>
+                    options = df %>%
+                        select(Fossil, Nuclear, Renewables) %>%
+                        colnames() %>%
                         purrr::map(function(col) list(label = col, value = col)), 
                     value='Fossil')
         )
@@ -47,12 +47,12 @@ app$callback(
     list(input('col-select', 'value'),
          input("slider-year", "value")),
     function(xcol, year) {
-        df = df |> filter(Year==year)
+        df = df %>% filter(Year==year)
         p <- plot_ly(df, type='choropleth', 
                      locations=df$Code, 
                      z=df[,xcol], 
                      text=df$Entity, 
-                     colorscale="Greens") |>
+                     colorscale="Greens") %>%
             layout(
                 title = paste( "Global", toString(xcol), "Consumption")
             )
